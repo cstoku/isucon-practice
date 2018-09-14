@@ -1,0 +1,4 @@
+{% for hostname in sorted_play_hosts -%}
+{{ localnet | ipaddr(loop.index) | ipaddr('address') }} {{ hostname }}
+{% endfor -%}
+

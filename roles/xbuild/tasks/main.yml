@@ -1,0 +1,24 @@
+- git:
+    repo: https://github.com/tagomoris/xbuild.git
+    dest: "{{ xbuild_install_path }}"
+- file:
+    path: "{{ xbuild_lang_path }}"
+    state: directory
+- command:
+    cmd: "{{ xbuild_cmd }} {{ item.language }} {{ item.version }} {{ dest }} {{ item.options | default('') }}"
+    creates: "{{ dest }}"
+  vars:
+    xbuild_cmd: "{{ xbuild_install_path }}/install"
+    dest: "{{ xbuild_lang_path }}/{{ item.language }}"
+  loop: "{{ xbuild_params }}"
+- lineinfile:
+    path: "{{ xbuild_profile_path }}"
+    line: export PATH={{ xbuild_lang_path }}/{{ item.language }}/bin:$PATH
+  loop: "{{ xbuild_params }}"
+- lineinfile:
+    path: "{{ xbuild_profile_path }}"
+    regexp: 'GOROOT=.*'
+    line: export GOROOT={{ xbuild_lang_path }}/{{ item.language }}
+  when: item.language is equalto 'go'
+  loop: "{{ xbuild_params }}"
+

@@ -3,5 +3,6 @@ variable "sakuracloud_token" {}
 
 variable "sakuracloud_secret" {}
 
-variable "sakuracloud_zone" {}
-
+variable "server_num" {
+  default = "4"
+}

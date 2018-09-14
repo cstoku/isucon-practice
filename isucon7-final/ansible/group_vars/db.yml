@@ -1,0 +1,5 @@
+require_pkgs:
+  - mysql-server
+  - git
+  - python-pip
+  - libmysqlclient-dev

@@ -1,0 +1,3 @@
+- hosts: bench
+  tasks:
+    - ping:

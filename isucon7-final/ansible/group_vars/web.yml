@@ -1,0 +1,95 @@
+require_pkgs:
+  - nginx
+  - git
+  - curl
+  - libreadline-dev
+  - pkg-config
+  - autoconf
+  - automake
+  - build-essential
+  - libmysqlclient-dev
+  - libssl-dev
+  - python3
+  - python3-dev
+  - python3-venv
+  - openjdk-8-jdk-headless
+  - libxml2-dev
+  - libcurl4-openssl-dev
+  - libxslt1-dev
+  - re2c
+  - bison
+  - libbz2-dev
+  - libssl-dev
+  - gettext
+  - libgettextpo-dev
+  - libicu-dev
+  - libmhash-dev
+  - libmcrypt-dev
+  - libgd-dev
+  - libtidy-dev
+  - libgmp-dev
+
+xbuild_lang_path: /home/isucon/local
+xbuild_params:
+  - language: ruby
+    version: 2.4.2
+  - language: perl
+    version: 5.26.1
+  - language: node
+    version: v8.9.1
+  - language: go
+    version: 1.9.2
+  - language: python
+    version: 3.6.2
+  - language: php
+    version: 7.1.9
+    options: >-
+      --
+      --with-pcre-regex
+      --with-zlib
+      --enable-fpm
+      --enable-pdo
+      --with-mysqli=mysqlnd
+      --with-pdo-mysql=mysqlnd
+      --with-openssl
+      --with-pcre-regex
+      --with-pcre-dir
+      --with-libxml-dir
+      --enable-opcache
+      --enable-bcmath
+      --with-bz2
+      --enable-calendar
+      --enable-cli
+      --enable-shmop
+      --enable-sysvsem
+      --enable-sysvshm
+      --enable-sysvmsg
+      --enable-mbregex
+      --enable-mbstring
+      --with-mcrypt
+      --enable-pcntl
+      --enable-sockets
+      --with-curl
+      --enable-zip
+      --with-pear
+      --with-gmp
+
+webapp_init:
+  - cmd: make ensure && make
+    chdir: /home/isucon/webapp/go
+    creates: /home/isucon/webapp/go/app
+  - cmd: npm install
+    chdir: /home/isucon/webapp/nodejs
+    creates: /home/isucon/webapp/nodejs/node_modules
+  - cmd: carton install
+    chdir: /home/isucon/webapp/perl
+    creates: /home/isucon/webapp/perl/local
+  - cmd: composer install
+    chdir: /home/isucon/webapp/php
+    creates: /home/isucon/webapp/php/vendor
+  - cmd: python -m pip install -r requirements.lock && touch .vendor_lock
+    chdir: /home/isucon/webapp/python
+    creates: /home/isucon/webapp/python/.vendor_lock
+  - cmd: ./setup.sh
+    chdir: /home/isucon/webapp/ruby
+    creates: /home/isucon/webapp/ruby/vendor

@@ -1,0 +1,6 @@
+# The local network interface
+auto eth1
+iface eth1 inet static
+address {{ local_address }}
+netmask {{ localnet | ipaddr('netmask') }}
+

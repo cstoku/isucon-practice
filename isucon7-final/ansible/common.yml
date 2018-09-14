@@ -1,0 +1,38 @@
+- hosts: all
+  vars:
+    sorted_play_hosts: "{{ play_hosts | sort }}"
+    local_address: "{{ localnet | ipaddr(sorted_play_hosts.index(inventory_hostname) + 1) | ipaddr('address') }}"
+  tasks:
+    - lineinfile:
+        path: /etc/network/interfaces
+        line: 'source-directory interfaces.d'
+    - template:
+        src: eth1.j2
+        dest: /etc/network/interfaces.d/eth1
+      register: eth1_cfg
+    - systemd:
+        name: networking
+        state: restarted
+      when: eth1_cfg is changed
+    - lineinfile:
+        path: /etc/hosts
+        regexp: '\s+{{ item }}$'
+        line: "{{ address }} {{ item }}"
+      vars:
+        address: "{{ localnet | ipaddr(idx + 1) | ipaddr('address') }}"
+      loop: "{{ sorted_play_hosts }}"
+      loop_control:
+        index_var: idx
+    - apt:
+        name: "{{ item }}"
+        update_cache: yes
+      loop: "{{ require_pkgs }}"
+    - group:
+        name: isucon
+    - user:
+        name: isucon
+        group: isucon
+        groups: 
+          - isucon
+          - sudo
+        password: '$6$ETE9alQh65DD$02kHscmJmabSXe25D85Ebm1wf0otKL3Fotb./VVoEyhMvyUy3XbfYmfisGXe1TsrEig6EL7mtaalfdKt3Vr8B0'
